@@ -15,6 +15,17 @@
       "skills": [
         "./skills/implicit-state-machines"
       ]
+    },
+    {
+      "name": "kayluhb-review",
+      "source": "./",
+      "strict": false,
+      "description": "Full GitHub PR review: parallel reviewer agents, verified findings, style fixes, checks, and replies. Works in any repo. Includes kayluhb-simplify and asd-ste100.",
+      "skills": [
+        "./skills/kayluhb-review",
+        "./skills/kayluhb-simplify",
+        "./skills/asd-ste100"
+      ]
     }
   ]
 }
