@@ -1,0 +1,20 @@
+{
+  "name": "kayluhb-skills",
+  "owner": {
+    "name": "Caleb Brown"
+  },
+  "metadata": {
+    "description": "Agent skills by @kayluhb"
+  },
+  "plugins": [
+    {
+      "name": "implicit-state-machines",
+      "source": "./",
+      "strict": false,
+      "description": "Audit an app for implicit state machines; propose UX/DX/AX improvements with zero regression risk, verified by two reviewer agents, published as a shareable page.",
+      "skills": [
+        "./skills/implicit-state-machines"
+      ]
+    }
+  ]
+}
