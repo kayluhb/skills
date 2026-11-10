@@ -31,7 +31,7 @@
       "name": "release-video",
       "source": "./",
       "strict": false,
-      "description": "Turn a release or changelog into a ~60s MP4 of animated title cards in a fixed house style, rendered frame by frame with Playwright and ffmpeg.",
+      "description": "Turn a release or changelog into a ~60s MP4 of animated title cards in the repo's brand colors, rendered frame by frame with Playwright and ffmpeg.",
       "skills": [
         "./skills/release-video"
       ]

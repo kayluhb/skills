@@ -9,7 +9,7 @@ description: Use when the user asks for a video, explainer clip, or animated rec
 
 Turn a release into a short MP4 of animated title cards. Each card is one HTML scene. `scripts/render.mjs` steps the page frame by frame in headless Chromium and pipes the frames to ffmpeg, so the output is smooth and repeatable.
 
-The look is fixed: `template/index.html` is the house style (tan background, green Oswald headings, DM Sans body, accent kicker with a rule, mock UI cards, fade-and-rise motion). Keep its fonts, tokens, layout and timing. Swap in the repo's logos only.
+`template/index.html` sets the house style: Oswald headings, DM Sans body, accent kicker with a rule, mock UI cards, fade-and-rise motion. Keep its fonts, layout and timing. Take the colors and logos from the repo.
 
 Needs: `node`, `ffmpeg`, Playwright with Chromium.
 
@@ -56,12 +56,26 @@ Copy rules:
 ## Step 4: Build
 
 1. Copy `template/` to a new folder in the scratchpad. Copy the repo's logo SVGs next to it (search for `logo`, `brand`, `wordmark`, `favicon`).
-2. Edit `index.html`. Set `data-start`/`data-dur` per scene with no overlaps, and set `TOTAL` to the end of the last scene. Use `data-in` for entrances and `data-count` for numbers. Put any other motion in `renderVisuals(t)`, as a pure function of `t`.
-3. Check stills before the full render, one per scene, at a time when every element is in:
+2. Map the repo's brand colors onto the `:root` slots. Look for design tokens: CSS custom properties, a Tailwind theme, a theme or tokens file, a UI package. Use the colors the product's own UI uses, not every swatch in the palette.
+
+   | Slot | Takes the repo's |
+   |---|---|
+   | `--bg` | page background |
+   | `--surface` | card / panel background |
+   | `--heading` | primary brand color (must read on `--bg`) |
+   | `--accent` | secondary or warm accent |
+   | `--ink` | body text |
+   | `--muted` | secondary text |
+   | `--line` | borders, dividers |
+   | `--alert` | error / warning color |
+
+   If the repo has no clear tokens, keep the template's defaults. Keep the template's fonts either way.
+3. Edit `index.html`. Set `data-start`/`data-dur` per scene with no overlaps, and set `TOTAL` to the end of the last scene. Use `data-in` for entrances and `data-count` for numbers. Put any other motion in `renderVisuals(t)`, as a pure function of `t`.
+4. Check stills before the full render, one per scene, at a time when every element is in:
    `node <skill>/scripts/render.mjs index.html --stills 3,10,20,...`
-   Read each PNG. Fix overflow, bad line breaks, empty space and misaligned blocks.
-4. Render: `node <skill>/scripts/render.mjs index.html release-<version>.mp4` (about 1 s of wall time per second of video).
-5. Pull 1–2 frames from the MP4 with `ffmpeg -ss <t> -i out.mp4 -frames:v 1 check.png` and look at them. Confirm duration with `ffprobe`.
+   Read each PNG. Compare the colors with the repo's own UI. Fix overflow, bad line breaks, empty space and misaligned blocks.
+5. Render: `node <skill>/scripts/render.mjs index.html release-<version>.mp4` (about 1 s of wall time per second of video).
+6. Pull 1–2 frames from the MP4 with `ffmpeg -ss <t> -i out.mp4 -frames:v 1 check.png` and look at them. Confirm duration with `ffprobe`.
 
 If Playwright is not found, run `npm i playwright && npx playwright install chromium` in the video folder.
 
@@ -77,4 +91,5 @@ Give the full absolute path to the MP4, a time / card table, and the choices the
 | `.copy` in a centered scene fills the column, so content sits at the top | `.center .copy { flex: none }` (already in the template) |
 | Logo SVG with a wide viewBox renders tiny | Raise its `height`; check the still |
 | One card per PR | Group by what the audience notices; small fixes go on the list card |
-| Re-theming to the repo's brand colors | Keep the house style; only the logos change |
+| Hex values hardcoded in new CSS | Use the `:root` slots so the repo's colors apply everywhere |
+| Changing fonts to the repo's | Keep Oswald and DM Sans; repo fonts often fail to load headless |

@@ -8,7 +8,7 @@ Agent skills by [@kayluhb](https://github.com/kayluhb).
 | [kayluhb-review](skills/kayluhb-review/SKILL.md) | Reviews a GitHub PR in its own worktree. Parallel reviewer agents check bugs, security, the repo's own written rules, tests and accessibility; every finding is checked against the code. On your PRs it fixes the findings, runs the checks, commits and replies to open threads. On other people's PRs it posts one review after you approve it. |
 | [kayluhb-simplify](skills/kayluhb-simplify/SKILL.md) | Fixes style rules in JS/TS and Python: DRY, nested ifs, destructuring, magic strings, single-letter names, class components. kayluhb-review uses it in analysis-only mode. |
 | [asd-ste100](skills/asd-ste100/SKILL.md) | Writes PR text, commit bodies, emails and docs in "80% ASD-STE100" Simplified Technical English. kayluhb-review uses it for everything it posts. |
-| [release-video](skills/release-video/SKILL.md) | Turns a release, changelog or set of PRs into a ~60s MP4 of animated title cards for a chosen audience. Uses one fixed house style and the repo's logos. Renders frame by frame with Playwright and ffmpeg, and checks stills before the full render. |
+| [release-video](skills/release-video/SKILL.md) | Turns a release, changelog or set of PRs into a ~60s MP4 of animated title cards for a chosen audience. Keeps one layout and type style, and takes colors and logos from the repo. Renders frame by frame with Playwright and ffmpeg, and checks stills before the full render. |
 
 ## Install
 
