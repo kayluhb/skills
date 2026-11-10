@@ -1,0 +1,158 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<!-- House style. Keep these fonts and tokens for every video; swap only the logos. -->
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #F0ECE7; --surface: #FCF9F4; --heading: #314818; --accent: #975B11;
+    --ink: #191A19; --muted: #656563; --line: #C2C2C0; --alert: #C8502E;
+    --font-heading: 'Oswald', sans-serif; --font-body: 'DM Sans', sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 1920px; height: 1080px; overflow: hidden; background: var(--bg); }
+  body { font-family: var(--font-body); color: var(--ink); position: relative; }
+
+  /* A scene is one card. Two-column by default: copy left, visual right. */
+  .scene { position: absolute; inset: 0; opacity: 0; display: flex; align-items: center; padding: 0 140px; gap: 100px; }
+  .copy { flex: 1 1 0; max-width: 860px; }
+  .visual { flex: 0 0 720px; display: flex; justify-content: center; align-items: center; }
+  .center { gap: 0; flex-direction: column; justify-content: center; text-align: center; }
+  .center .copy { max-width: none; flex: none; }
+  .center p { margin-left: auto; margin-right: auto; }
+
+  .kicker { font-family: var(--font-heading); font-weight: 600; letter-spacing: .18em; text-transform: uppercase; color: var(--accent); font-size: 30px; margin-bottom: 28px; display: flex; gap: 18px; align-items: center; }
+  .center .kicker { justify-content: center; }
+  .kicker .rule { width: 60px; height: 3px; background: var(--accent); }
+  h1 { font-family: var(--font-heading); font-weight: 700; text-transform: uppercase; color: var(--heading); font-size: 124px; line-height: .98; }
+  h2 { font-family: var(--font-heading); font-weight: 600; text-transform: uppercase; color: var(--heading); font-size: 80px; line-height: 1.02; }
+  p { font-size: 36px; line-height: 1.4; color: var(--muted); margin-top: 34px; max-width: 820px; }
+  p b { color: var(--ink); }
+  .nowrap { white-space: nowrap; }
+  .pill { display: inline-block; margin-top: 30px; padding: 10px 22px; border: 2px solid var(--muted); color: var(--muted); border-radius: 999px; font-size: 24px; }
+
+  .list { list-style: none; margin-top: 40px; }
+  .list li { font-size: 36px; line-height: 1.35; padding: 22px 0 22px 56px; position: relative; border-top: 1px solid var(--line); }
+  .list li::before { content: ''; position: absolute; left: 0; top: 36px; width: 26px; height: 3px; background: var(--accent); }
+
+  /* Mock UI card for the right-hand visual. */
+  .card { background: var(--surface); border: 1px solid var(--line); border-radius: 18px; box-shadow: 0 30px 60px -30px rgba(0,0,0,.35); padding: 40px 44px; width: 640px; }
+  .card-title { font-family: var(--font-heading); font-weight: 600; text-transform: uppercase; letter-spacing: .1em; font-size: 22px; color: var(--muted); margin-bottom: 22px; }
+  .row { display: flex; justify-content: space-between; font-size: 28px; padding: 18px 0; border-top: 1px solid var(--line); }
+  .row .value { font-family: var(--font-heading); font-size: 32px; color: var(--heading); font-variant-numeric: tabular-nums; }
+  .alert { margin-top: 22px; padding: 18px 22px; border-left: 5px solid var(--alert); background: color-mix(in srgb, var(--alert) 10%, white); border-radius: 8px; font-size: 24px; }
+
+  .banner { padding: 26px 30px; background: color-mix(in srgb, var(--accent) 12%, white); border: 2px solid var(--accent); border-radius: 14px; font-size: 28px; line-height: 1.35; }
+  .banner b { display: block; font-family: var(--font-heading); text-transform: uppercase; letter-spacing: .06em; color: var(--accent); font-size: 26px; margin-bottom: 6px; }
+  .boxes { display: flex; gap: 14px; justify-content: center; }
+  .box { width: 62px; height: 82px; border: 2px solid var(--line); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-family: var(--font-heading); font-weight: 600; font-size: 40px; color: var(--heading); background: #fff; }
+  .box.on { border-color: var(--heading); }
+  .progress { height: 14px; background: #E1E1DD; border-radius: 99px; margin-top: 36px; overflow: hidden; }
+  .progress > div { height: 100%; background: var(--heading); width: 0; }
+  .url { font-family: ui-monospace, Menlo, monospace; font-size: 24px; padding: 18px 22px; background: #fff; border: 1px solid var(--line); border-radius: 10px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .url.good { color: var(--heading); border-color: var(--heading); }
+  .strike { position: relative; }
+  .strike::after { content: ''; position: absolute; left: 0; top: 50%; height: 3px; background: var(--alert); width: var(--w, 0%); }
+  .brand-foot { position: absolute; left: 140px; bottom: 56px; height: 36px; }
+  [data-in] { opacity: 0; }
+</style>
+</head>
+<body>
+
+<!--
+  Each scene: data-start and data-dur in seconds. Scenes must not overlap.
+  Inside a scene:
+    data-in="1.2"                      fade + rise in 1.2s after the scene starts
+    data-count="412.50" data-at="1.6"  count up from 0 (formatted by data-format)
+  Anything else animated: add it to renderVisuals(t) below.
+-->
+
+<section class="scene center" data-start="0" data-dur="5">
+  <!-- <img data-in="0.2" src="logo.svg" style="height:160px;margin-bottom:24px"> -->
+  <div class="copy">
+    <div class="kicker" data-in="0.5"><span class="rule"></span>Release VERSION<span class="rule"></span></div>
+    <h1 data-in="0.8">What's new for<br>AUDIENCE</h1>
+    <p data-in="1.4">The highlights, in about a minute.</p>
+  </div>
+</section>
+
+<section class="scene" data-start="5" data-dur="9">
+  <div class="copy">
+    <div class="kicker" data-in="0.2"><span class="rule"></span>01 · AREA</div>
+    <h2 data-in="0.4">Headline in the reader's words</h2>
+    <p data-in="1.0">One or two sentences on what changes for them. <b>Bold the key phrase.</b></p>
+  </div>
+  <div class="visual">
+    <div class="card" data-in="0.6">
+      <div class="card-title">Mock UI</div>
+      <div class="row"><span>Item 1</span><span class="value" data-count="412.50" data-at="1.6" data-format="money">$0.00</span></div>
+      <div class="row"><span>Item 2</span><span class="value" data-count="389" data-at="2.1">0</span></div>
+      <div class="alert" data-in="3.5"><b>Example message.</b> Use the product's real wording if it exists.</div>
+    </div>
+  </div>
+</section>
+
+<section class="scene" data-start="14" data-dur="8">
+  <div class="copy" style="max-width:1500px">
+    <div class="kicker" data-in="0.2"><span class="rule"></span>02 · ALSO</div>
+    <h2 data-in="0.4">Smaller fixes</h2>
+    <ul class="list">
+      <li data-in="1.0">First fix, <b>one line</b>.</li>
+      <li data-in="2.2">Second fix.</li>
+      <li data-in="3.4">Third fix.</li>
+    </ul>
+  </div>
+</section>
+
+<section class="scene center" data-start="22" data-dur="4">
+  <div class="copy">
+    <h1 data-in="0.5">Sign-off line</h1>
+    <p data-in="1.0">Release VERSION · PRODUCT</p>
+  </div>
+</section>
+
+<!-- <img class="brand-foot" id="foot" src="wordmark.svg"> -->
+
+<script>
+  const TOTAL = 26;          // = end of the last scene
+  const FADE = 0.45;         // scene cross-fade, seconds
+  const ease = (x) => 1 - Math.pow(1 - Math.min(Math.max(x, 0), 1), 3);
+  const clamp01 = (x) => Math.min(Math.max(x, 0), 1);
+  const scenes = [...document.querySelectorAll('.scene')];
+  const formatCount = (value, format) => format === 'money' ? '$' + value.toFixed(2) : Math.round(value).toLocaleString();
+
+  function renderScene(scene, local, dur) {
+    scene.style.opacity = Math.min(ease(local / FADE), 1 - clamp01((local - (dur - FADE)) / FADE));
+    for (const element of scene.querySelectorAll('[data-in]')) {
+      const progress = ease((local - parseFloat(element.dataset.in)) / 0.6);
+      element.style.opacity = progress;
+      element.style.transform = `translateY(${(1 - progress) * 28}px)`;
+    }
+    for (const element of scene.querySelectorAll('[data-count]')) {
+      const progress = ease((local - parseFloat(element.dataset.at)) / 1.0);
+      element.textContent = formatCount(parseFloat(element.dataset.count) * progress, element.dataset.format);
+    }
+  }
+
+  // Custom animation driven by absolute time t (seconds). Must be a pure
+  // function of t: no timers, no Date.now(), no CSS transitions.
+  function renderVisuals(t) {
+    const foot = document.getElementById('foot');
+    if (foot) foot.style.opacity = (t > 5.2 && t < TOTAL - 4.2) ? .85 : 0;
+  }
+
+  window.render = (t) => {
+    for (const scene of scenes) {
+      const local = t - parseFloat(scene.dataset.start);
+      const dur = parseFloat(scene.dataset.dur);
+      if (local < 0 || local > dur) { scene.style.opacity = 0; continue; }
+      renderScene(scene, local, dur);
+    }
+    renderVisuals(t);
+  };
+  window.TOTAL = TOTAL;
+  render(0);
+</script>
+</body>
+</html>
