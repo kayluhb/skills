@@ -9,6 +9,7 @@ Agent skills by [@kayluhb](https://github.com/kayluhb).
 | [kayluhb-simplify](skills/kayluhb-simplify/SKILL.md) | Fixes style rules in JS/TS and Python: DRY, nested ifs, destructuring, magic strings, single-letter names, class components. kayluhb-review uses it in analysis-only mode. |
 | [asd-ste100](skills/asd-ste100/SKILL.md) | Writes PR text, commit bodies, emails and docs in "80% ASD-STE100" Simplified Technical English. kayluhb-review uses it for everything it posts. |
 | [release-video](skills/release-video/SKILL.md) | Turns a release, changelog or set of PRs into a ~60s MP4 of animated title cards for a chosen audience. Keeps one layout and type style, and takes colors and logos from the repo. Renders frame by frame with Playwright and ffmpeg, and checks stills before the full render. |
+| [standup](skills/standup/SKILL.md) | Writes your daily standup (yesterday / today / blockers) from Claude Code session history and GitHub PR activity. Catches the work git misses: investigations, alert triage, reviews, data pulls. |
 
 ## Install
 
@@ -25,6 +26,7 @@ npx skills add kayluhb/skills
 /plugin install implicit-state-machines@kayluhb-skills
 /plugin install kayluhb-review@kayluhb-skills   # also installs kayluhb-simplify and asd-ste100
 /plugin install release-video@kayluhb-skills
+/plugin install standup@kayluhb-skills
 ```
 
 **Manual:** copy a folder from `skills/` into `~/.claude/skills/` (or your agent's skills folder). kayluhb-review needs `kayluhb-simplify` and `asd-ste100` beside it for its style and writing steps, and skips them if they are missing.
@@ -34,6 +36,8 @@ npx skills add kayluhb/skills
 Run `/implicit-state-machines` in a repo, or ask: "find the implicit state machines in this app".
 
 Run `/release-video` in a repo on its release branch, or ask: "make a video for this release". It needs `node`, `ffmpeg` and Playwright with Chromium.
+
+Run `/standup`, or ask: "what's my standup today?". It reads `~/.claude/projects` and uses the `gh` CLI if logged in.
 
 Run `/kayluhb-review <PR number or URL>` in the PR's repo. It needs the `gh` CLI, logged in.
 
