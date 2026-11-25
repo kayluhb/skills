@@ -35,6 +35,15 @@
       "skills": [
         "./skills/release-video"
       ]
+    },
+    {
+      "name": "standup",
+      "source": "./",
+      "strict": false,
+      "description": "Daily standup (yesterday / today / blockers) built from Claude Code session history and GitHub PR activity, not just git commits.",
+      "skills": [
+        "./skills/standup"
+      ]
     }
   ]
 }
